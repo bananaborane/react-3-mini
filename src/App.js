@@ -6,6 +6,8 @@ import './App.css';
 // Toast notification dependencies
 import { ToastContainer, toast } from 'react-toastify';
 
+const baseUrl = 'https://joes-autos.herokuapp.com/api'
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -31,6 +33,10 @@ class App extends Component {
   getVehicles() {
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(baseUrl + '/vehicles')
+    .then(response => { toast.success("Successfully got Vehicles.");
+    this.setState({ vehiclesToDisplay: response.data })})
+    .catch(error => { console.log('error:', error); toast.error("Failed at fetching Vehicles")})
   }
 
   getPotentialBuyers() {
@@ -39,6 +45,9 @@ class App extends Component {
   }
 
   sellCar(id) {
+    axios.delete(`${baseUrl}/vehicles/${id}`)
+    .then(res => {console.log(1111); this.setState({ vehiclesToDisplay: res.data.vehicles })})
+    .catch(err => console.log(err))
     // axios (DELETE)
     // setState with response -> vehiclesToDisplay
   }
@@ -60,6 +69,9 @@ class App extends Component {
   updatePrice(priceChange, id) {
     // axios (PUT)
     // setState with response -> vehiclesToDisplay
+    axios.put(`${baseUrl}/vehicles/${id}/${priceChange}`)
+    .then(res => this.setState({ vehiclesToDisplay:res.data.vehicles }))
+    .catch(err => {console.log('we have a prob:', err)})
   }
 
   addCar() {
@@ -70,6 +82,10 @@ class App extends Component {
       year: this.year.value,
       price: this.price.value
     };
+    axios.post(baseUrl + '/vehicles', newCar)
+    .then(res => {console.log(11111, res.data.vehicles); this.setState({ vehiclesToDisplay: res.data.vehicles }); toast.success("Successfully added vehicle.");})
+    .catch(err => {console.log('error', err); toast.error('Failed at adding new vehicle.')})
+    // .post and put request can take 2 parameters, the url and the body (???)
 
     // axios (POST)
     // setState with response -> vehiclesToDisplay
